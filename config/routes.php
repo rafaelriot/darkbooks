@@ -10,9 +10,42 @@ return function (\Slim\App $app) {
         $response->getBody()->write(json_encode([
             'status' => 'success',
             'message' => 'DarkBooks API Server is running',
-            'version' => '1.0.0'
+            'version' => '1.0.0',
+            'download_app' => 'https://orange-alligator-652108.hostingersite.com/descargar'
         ], JSON_PRETTY_PRINT));
         return $response->withHeader('Content-Type', 'application/json');
+    });
+
+    // --- Descarga de Aplicación APK ---
+    $app->get('/darkbooks.apk', function ($request, $response) {
+        $file = __DIR__ . '/../public/darkbooks.apk';
+        if (!file_exists($file)) {
+            $file = __DIR__ . '/../darkbooks.apk';
+        }
+        if (file_exists($file)) {
+            $stream = new \Slim\Psr7\Stream(fopen($file, 'rb'));
+            return $response
+                ->withHeader('Content-Type', 'application/vnd.android.package-archive')
+                ->withHeader('Content-Disposition', 'attachment; filename="darkbooks.apk"')
+                ->withHeader('Content-Length', (string)filesize($file))
+                ->withBody($stream);
+        }
+        $response->getBody()->write(json_encode(['error' => 'APK file not found']));
+        return $response->withStatus(404)->withHeader('Content-Type', 'application/json');
+    });
+
+    $app->get('/descargar', function ($request, $response) {
+        $file = __DIR__ . '/../public/descargar.html';
+        $html = file_exists($file) ? file_get_contents($file) : 'Página de descarga en mantenimiento';
+        $response->getBody()->write($html);
+        return $response->withHeader('Content-Type', 'text/html');
+    });
+
+    $app->get('/download', function ($request, $response) {
+        $file = __DIR__ . '/../public/descargar.html';
+        $html = file_exists($file) ? file_get_contents($file) : 'Página de descarga en mantenimiento';
+        $response->getBody()->write($html);
+        return $response->withHeader('Content-Type', 'text/html');
     });
 
     $app->get('/api/v1[/]', function ($request, $response) {
