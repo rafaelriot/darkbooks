@@ -1,0 +1,15 @@
+# Environment variables
+.env
+
+# Vendor dependencies
+/vendor/
+
+# Storage & Uploads
+/storage/uploads/*
+!/storage/uploads/.gitkeep
+
+# IDEs & System
+.DS_Store
+.idea/
+.vscode/
+*.log
